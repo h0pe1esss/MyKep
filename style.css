@@ -1,0 +1,319 @@
+:root {
+    --bg-color: #000000;
+    --glass-bg: rgba(18, 18, 20, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.12);
+    --text-main: #ffffff;
+    --text-muted: #8e8e93;
+    --accent: #BF5AF2; /* Елітний неоново-фіолетовий */
+    --accent-glow: rgba(191, 90, 242, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 120px;
+}
+
+/* Глибокі акцентні градієнти на фоні */
+body::before {
+    content: '';
+    position: fixed;
+    top: -10%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    filter: blur(100px);
+    z-index: -1; pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: 0; right: -20%;
+    width: 70%; height: 70%;
+    background: radial-gradient(circle, rgba(94, 92, 230, 0.25) 0%, transparent 70%);
+    filter: blur(90px);
+    z-index: -1; pointer-events: none;
+}
+
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.header {
+    position: sticky; top: 0;
+    padding: 50px 24px 20px;
+    z-index: 100;
+}
+
+.glass-nav {
+    backdrop-filter: blur(30px);
+}
+
+.day-header-container {
+    display: flex; justify-content: space-between; align-items: center; padding-top: 55px;
+}
+
+.day-title-wrapper { text-align: center; flex-grow: 1; }
+
+.day-title-wrapper h1 {
+    margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+}
+
+.accent-text {
+    color: var(--accent);
+    font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+}
+
+.icon-btn {
+    background: transparent; border: none; color: var(--text-main);
+    padding: 10px; border-radius: 50%; cursor: pointer; display: flex; transition: all 0.2s;
+}
+
+.icon-btn:active { background: rgba(255, 255, 255, 0.1); }
+.icon-btn svg { width: 28px; height: 28px; fill: currentColor; }
+
+.page {
+    display: none; padding: 24px; animation: fadeSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.page.active { display: block; }
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    padding: 0; border-radius: 28px; margin-bottom: 20px; overflow: hidden;
+}
+
+.accent-border {
+    border: 1px solid rgba(191, 90, 242, 0.4);
+    box-shadow: 0 0 20px rgba(191, 90, 242, 0.15);
+}
+
+/* ДИЗАЙН КАРТКИ УРОКУ ЗІ СКРІНШОТА */
+.lesson-row {
+    display: flex;
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.3s;
+}
+
+.lesson-row:last-child { border-bottom: none; }
+
+/* Виділення пари, яка йде зараз */
+.lesson-row.active-lesson {
+    background: rgba(191, 90, 242, 0.1);
+    border-left: 3px solid var(--accent);
+}
+.lesson-row.active-lesson .lesson-num { color: var(--accent); }
+
+.lesson-time-col {
+    width: 85px;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 16px;
+    margin-right: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.lesson-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 8px;
+    margin-top: -4px;
+}
+
+.lesson-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.lesson-info-col {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.lesson-subject {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.lesson-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.lesson-meta span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lesson-meta svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+/* Інші елементи */
+.swipe-area { touch-action: pan-y; min-height: 50vh; }
+.subtitle { margin: 24px 24px 12px; font-size: 20px; font-weight: 600; }
+.text-muted { margin: 0 24px 24px; color: var(--text-muted); font-size: 15px; line-height: 1.5; }
+.select-wrapper { padding: 0 24px 24px; }
+.glass-select {
+    width: 100%; padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-highlight);
+    color: var(--text-main); border-radius: 16px;
+    font-size: 16px; font-weight: 600; appearance: none; outline: none;
+}
+.glass-select option { background: #111111; color: #ffffff; }
+.glass-btn {
+    background: var(--accent); border: none; color: white;
+    padding: 16px; border-radius: 16px; font-size: 16px; font-weight: 700;
+    width: calc(100% - 48px); margin: 0 24px 24px; cursor: pointer;
+    box-shadow: 0 10px 20px var(--accent-glow);
+}
+
+.navbar {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    width: 220px; height: 68px; display: flex; justify-content: space-evenly;
+    align-items: center; border-radius: 34px; z-index: 1000;
+    background: rgba(18, 18, 20, 0.85);
+}
+
+.nav-item {
+    color: var(--text-muted); width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: all 0.3s;
+}
+
+.nav-item svg { width: 24px; height: 24px; fill: currentColor; }
+.nav-item.active {
+    color: var(--text-main); background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px var(--glass-border);
+}
+/* --- СТИЛІ ДЛЯ КРУГОВОГО ТАЙМЕРА (ВКЛАДКА "ЗАРАЗ") --- */
+
+.now-timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 30px 0;
+    position: relative;
+}
+
+.timer-wrapper {
+    position: relative;
+    width: 240px;
+    height: 240px;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg); /* Початок з 12-ї години */
+}
+
+/* Ідеальне абсолютне центрування тексту в колі */
+.timer-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 10;
+}
+
+.timer-label {
+    font-size: 13px; /* Зменшений шрифт */
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+}
+
+.timer-countdown {
+    font-size: 40px; /* Зменшений та більш акуратний */
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    font-variant-numeric: tabular-nums; /* Ідеально рівні цифри */
+    margin-bottom: 8px;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.timer-cabinet {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(191, 90, 242, 0.2); /* Фіолетовий відтінок */
+    border: 1px solid rgba(191, 90, 242, 0.4);
+    padding: 5px 14px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.progress-ring__circle {
+    stroke: var(--accent); /* Завжди фіолетовий */
+    transition: stroke-dashoffset 1s linear;
+    filter: drop-shadow(0 0 10px var(--accent-glow));
+}
+
+.next-lesson-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 10px 0 15px 10px;
+}
+
+.status-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 16px;
+}
