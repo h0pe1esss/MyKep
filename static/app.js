@@ -507,5 +507,29 @@ document.getElementById('next-day').addEventListener('click', () => {
         renderCurrentDay();
     }
 });
+function checkDisplayMode() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
+    const installScreen = document.getElementById('install-screen');
+    const mainApp = document.getElementById('main-app');
+
+    if (isStandalone) {
+        installScreen.classList.remove('active');
+        mainApp.classList.add('active');
+        initApp(); 
+    } else {
+        installScreen.classList.add('active');
+        mainApp.classList.remove('active');
+        
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => {
+            if (e.matches) {
+                installScreen.classList.remove('active');
+                mainApp.classList.add('active');
+                initApp();
+            }
+        });
+    }
+}
+
+checkDisplayMode();
 
 initApp();
