@@ -60,10 +60,6 @@ body::after {
     z-index: 100;
 }
 
-.glass-nav {
-    backdrop-filter: blur(30px);
-}
-
 .day-header-container {
     display: flex; justify-content: space-between; align-items: center; padding-top: 55px;
 }
