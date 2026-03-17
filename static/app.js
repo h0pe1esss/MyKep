@@ -354,7 +354,7 @@ function updateNowPage() {
         circle.style.strokeDashoffset = offset;
     }
 
-    let currentRenderedNextLesson = null;
+    let lastRenderedNextBlock = null;
 
     function tick() {
         const now = new Date().getTime();
@@ -426,28 +426,11 @@ function updateNowPage() {
                 cabinetEl.style.display = 'none';
             }
 
-            if(nextLesson) {
-                if(currentRenderedNextLesson !== nextLesson.number) {
-                    nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
-                    currentRenderedNextLesson = nextLesson.number;
-                }
-            } else {
-                if(currentRenderedNextLesson !== 'none') {
-                    nextContainer.innerHTML = `<div class="status-message" style="padding: 20px;">Це остання пара на сьогодні!</div>`;
-                    currentRenderedNextLesson = 'none';
-                }
-            }
-
         } else if (currentState === 'BREAK') {
             labelEl.textContent = "Перерва";
             countdownEl.textContent = timeStr;
             setProgress(percent);
             cabinetEl.style.display = 'none';
-
-            if(nextLesson && currentRenderedNextLesson !== nextLesson.number) {
-                nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
-                currentRenderedNextLesson = nextLesson.number;
-            }
 
         } else if (currentState === 'BEFORE') {
             labelEl.textContent = "До початку";
@@ -455,28 +438,35 @@ function updateNowPage() {
             setProgress(percent);
             cabinetEl.style.display = 'none';
 
-            if(nextLesson && currentRenderedNextLesson !== nextLesson.number) {
-                nextContainer.innerHTML = `<div class="next-lesson-header">Перша пара</div>` + createLessonCardHtml(nextLesson);
-                currentRenderedNextLesson = nextLesson.number;
-            }
-
         } else {
             labelEl.textContent = "Пари";
             countdownEl.textContent = "Завершено";
             cabinetEl.style.display = 'none';
             setProgress(100); 
-            if(currentRenderedNextLesson !== 'end') {
-                nextContainer.innerHTML = `<div class="status-message">Всі пари на сьогодні завершилися.</div>`;
-                currentRenderedNextLesson = 'end';
-            }
             clearInterval(liveTimerInterval);
+        }
+
+        let nextBlockHtml = "";
+        
+        if (currentState === 'BEFORE' && nextLesson) {
+            nextBlockHtml = `<div class="next-lesson-header">Перша пара</div>` + createLessonCardHtml(nextLesson);
+        } else if ((currentState === 'LESSON' || currentState === 'BREAK') && nextLesson) {
+            nextBlockHtml = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
+        } else if (currentState === 'LESSON' && !nextLesson) {
+            nextBlockHtml = `<div class="status-message" style="padding: 20px;">Це остання пара на сьогодні!</div>`;
+        } else if (currentState === 'END') {
+            nextBlockHtml = `<div class="status-message">Всі пари на сьогодні завершилися.</div>`;
+        }
+
+        if (lastRenderedNextBlock !== nextBlockHtml) {
+            nextContainer.innerHTML = nextBlockHtml;
+            lastRenderedNextBlock = nextBlockHtml;
         }
     }
 
     tick(); 
     liveTimerInterval = setInterval(tick, 1000);
 }
-
 document.getElementById('clear-cache').addEventListener('click', () => {
     if(confirm("Видалити збережені дані та групу?")) {
         localStorage.removeItem('kepScheduleData');
