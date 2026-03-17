@@ -320,7 +320,6 @@ function updateNowPage() {
         return;
     }
 
-    // Рендер основи: SVG кільце з маскою для ефекту рисочок
     container.innerHTML = `
         <div class="now-timer-container">
             <div class="timer-wrapper">
@@ -347,7 +346,6 @@ function updateNowPage() {
     const radius = circle.r.baseVal.value;
     const circumference = radius * 2 * Math.PI;
     
-    // Встановлюємо плавне заповнення (бо маска робить рисочки за нас)
     circle.style.strokeDasharray = `${circumference} ${circumference}`;
     circle.style.strokeDashoffset = circumference;
 
@@ -356,9 +354,11 @@ function updateNowPage() {
         circle.style.strokeDashoffset = offset;
     }
 
+    let currentRenderedNextLesson = null;
+
     function tick() {
         const now = new Date().getTime();
-        let currentState = 'END'; // BEFORE, LESSON, BREAK, END
+        let currentState = 'END'; 
         let currentLesson = null;
         let nextLesson = null;
         let timeRemaining = 0;
@@ -373,7 +373,7 @@ function updateNowPage() {
                 currentState = 'BEFORE';
                 nextLesson = lesson;
                 timeRemaining = times.start - now;
-                totalDuration = 60 * 60 * 1000; // Візуал до початку
+                totalDuration = 60 * 60 * 1000; 
                 break;
             }
 
@@ -427,9 +427,15 @@ function updateNowPage() {
             }
 
             if(nextLesson) {
-                nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
+                if(currentRenderedNextLesson !== nextLesson.number) {
+                    nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
+                    currentRenderedNextLesson = nextLesson.number;
+                }
             } else {
-                nextContainer.innerHTML = `<div class="status-message" style="padding: 20px;">Це остання пара на сьогодні!</div>`;
+                if(currentRenderedNextLesson !== 'none') {
+                    nextContainer.innerHTML = `<div class="status-message" style="padding: 20px;">Це остання пара на сьогодні!</div>`;
+                    currentRenderedNextLesson = 'none';
+                }
             }
 
         } else if (currentState === 'BREAK') {
@@ -438,7 +444,10 @@ function updateNowPage() {
             setProgress(percent);
             cabinetEl.style.display = 'none';
 
-            nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
+            if(nextLesson && currentRenderedNextLesson !== nextLesson.number) {
+                nextContainer.innerHTML = `<div class="next-lesson-header">Наступна пара</div>` + createLessonCardHtml(nextLesson);
+                currentRenderedNextLesson = nextLesson.number;
+            }
 
         } else if (currentState === 'BEFORE') {
             labelEl.textContent = "До початку";
@@ -446,14 +455,20 @@ function updateNowPage() {
             setProgress(percent);
             cabinetEl.style.display = 'none';
 
-            nextContainer.innerHTML = `<div class="next-lesson-header">Перша пара</div>` + createLessonCardHtml(nextLesson);
+            if(nextLesson && currentRenderedNextLesson !== nextLesson.number) {
+                nextContainer.innerHTML = `<div class="next-lesson-header">Перша пара</div>` + createLessonCardHtml(nextLesson);
+                currentRenderedNextLesson = nextLesson.number;
+            }
 
         } else {
             labelEl.textContent = "Пари";
             countdownEl.textContent = "Завершено";
             cabinetEl.style.display = 'none';
             setProgress(100); 
-            nextContainer.innerHTML = `<div class="status-message">Всі пари на сьогодні завершилися.</div>`;
+            if(currentRenderedNextLesson !== 'end') {
+                nextContainer.innerHTML = `<div class="status-message">Всі пари на сьогодні завершилися.</div>`;
+                currentRenderedNextLesson = 'end';
+            }
             clearInterval(liveTimerInterval);
         }
     }
